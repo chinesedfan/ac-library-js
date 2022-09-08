@@ -1,0 +1,11 @@
+{
+  "name": "ac-library-js",
+  "version": "1.0.0",
+  "description": "JavaScript version of AC(AtCoder) Library",
+  "main": "index.js",
+  "author": "Xianming Zhong",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.0.1"
+  }
+}
