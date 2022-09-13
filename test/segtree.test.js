@@ -71,7 +71,7 @@ describe('SegTree', () => {
         expect(s.prod(0, 1)).toBe('dummy')
         expect(s.prod(1, 1)).toBe('$')
     })
-    it('CompareNative', () => {
+    it.skip('CompareNative', () => {
         let y
         function leq_y(x) {
             return x.length <= y.length
@@ -103,6 +103,68 @@ describe('SegTree', () => {
                     y = seg1.prod(l, r)
                     expect(seg1.minLeft(r, leq_y)).toEqual(seg0.minLeft(r, leq_y))
                 }
+            }
+        }
+    })
+    it('Sum', () => {
+        const n = 10
+        const s = new SegTree(n, {
+            op: (a, b) => a + b,
+            e: () => 0,
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, i)
+        }
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)).toEqual(Math.max(0, l + r - 1) * (r - l) / 2)
+            }
+        }
+    })
+    it('Max', () => {
+        const n = 10
+        const s = new SegTree(n, {
+            op: (a, b) => Math.max(a, b),
+            e: () => -Infinity,
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, i)
+        }
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)).toEqual(l < r ? r - 1 : -Infinity)
+            }
+        }
+    })
+    it('Min', () => {
+        const n = 10
+        const s = new SegTree(n, {
+            op: (a, b) => Math.min(a, b),
+            e: () => Infinity,
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, i)
+        }
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)).toEqual(l < r ? l : Infinity)
+            }
+        }
+    })
+    it('MinPos', () => {
+        const n = 10
+        const s = new SegTree(n, {
+            op: (a, b) => {
+                return a[0] <= b[0] ? a : b
+            },
+            e: () => [Infinity, -1],
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, [i, i]) // [value, position]
+        }
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)).toEqual(l < r ? [l, l] : [Infinity, -1])
             }
         }
     })
