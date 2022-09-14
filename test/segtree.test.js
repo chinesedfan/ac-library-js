@@ -71,7 +71,7 @@ describe('SegTree', () => {
         expect(s.prod(0, 1)).toBe('dummy')
         expect(s.prod(1, 1)).toBe('$')
     })
-    it.skip('CompareNative', () => {
+    it.skip('CompareNaive', () => {
         let y
         function leq_y(x) {
             return x.length <= y.length
