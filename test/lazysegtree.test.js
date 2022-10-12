@@ -43,4 +43,80 @@ describe('LazySegTree', () => {
         expect(seg.prod(2, 3)).toEqual(-5)
         expect(seg.prod(2, 4)).toEqual(0)
     })
+    it('Sum', () => {
+        const n = 10
+        const s = new LazySegTree(n, {
+            op: (a, b) => [a[0] + b[0], a[1] + b[1]],
+            e: () => [0, 0], // val, len
+            mapping: (f, a) => [f * a[1] + a[0], a[1]],
+            composition: (fa, fb) => fa + fb,
+            id: () => 0,
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, [0, 1])
+        }
+        s.applyRange(0, n, 5)
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)[0]).toEqual((r - l) * 5)
+            }
+        }
+    })
+    it('Max', () => {
+        const n = 10
+        const s = new LazySegTree(n, {
+            op: Math.max,
+            e: () => -Infinity,
+            mapping: Math.max,
+            composition: Math.max,
+            id: () => -Infinity,
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, i)
+        }
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)).toEqual(l < r ? r - 1 : -Infinity)
+            }
+        }
+    })
+    it('Min', () => {
+        const n = 10
+        const s = new LazySegTree(n, {
+            op: Math.min,
+            e: () => Infinity,
+            mapping: Math.min,
+            composition: Math.min,
+            id: () => Infinity,
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, i)
+        }
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)).toEqual(l < r ? l : Infinity)
+            }
+        }
+    })
+    it('MinPos', () => {
+        const n = 10
+        const fmin = (a, b) => {
+            return a[0] <= b[0] ? a : b
+        }
+        const s = new LazySegTree(n, {
+            op: fmin,
+            e: () => [Infinity, -1],
+            mapping: fmin,
+            composition: fmin,
+            id: () => [Infinity, -1],
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, [i, i]) // [value, position]
+        }
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)).toEqual(l < r ? [l, l] : [Infinity, -1])
+            }
+        }
+    })
 })
