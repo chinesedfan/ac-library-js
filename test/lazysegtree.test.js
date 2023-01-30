@@ -1,5 +1,6 @@
 const { LazySegTree } = require('lazysegtree')
 
+// Max + Add
 const segOptions = {
     op: Math.max,
     e: () => -1e9,
@@ -34,7 +35,7 @@ describe('LazySegTree', () => {
             }
         }
     })
-    it('Usage', () => {
+    it('Usage(Max + Add)', () => {
         const seg = new LazySegTree(Array(10).fill(0), segOptions)
         expect(seg.allProd()).toEqual(0)
         seg.applyRange(0, 3, 5)
@@ -43,7 +44,7 @@ describe('LazySegTree', () => {
         expect(seg.prod(2, 3)).toEqual(-5)
         expect(seg.prod(2, 4)).toEqual(0)
     })
-    it('Sum', () => {
+    it('Sum + Add', () => {
         const n = 10
         const s = new LazySegTree(n, {
             op: (a, b) => [a[0] + b[0], a[1] + b[1]],
@@ -62,7 +63,27 @@ describe('LazySegTree', () => {
             }
         }
     })
-    it('Max', () => {
+    it('Sum + Replace', () => {
+        const n = 10
+        const s = new LazySegTree(n, {
+            op: (a, b) => [a[0] + b[0], a[1] + b[1]],
+            e: () => [0, 0], // val, len
+            mapping: (f, a) => (f ? [f * a[1], a[1]] : a),
+            composition: (fa, fb) => (fa || fb),
+            id: () => 0, // 0 as special id makes faster
+        })
+        for (let i = 0; i < n; i++) {
+            s.set(i, [0, 1])
+        }
+        s.applyRange(0, n, 3)
+        s.applyRange(0, n, 5)
+        for (let l = 0; l <= n; l++) {
+            for (let r = l; r <= n; r++) {
+                expect(s.prod(l, r)[0]).toEqual((r - l) * 5)
+            }
+        }
+    })
+    it('Max + Merge', () => {
         const n = 10
         const s = new LazySegTree(n, {
             op: Math.max,
@@ -80,7 +101,7 @@ describe('LazySegTree', () => {
             }
         }
     })
-    it('Min', () => {
+    it('Min + Merge', () => {
         const n = 10
         const s = new LazySegTree(n, {
             op: Math.min,
@@ -98,7 +119,7 @@ describe('LazySegTree', () => {
             }
         }
     })
-    it('MinPos', () => {
+    it('MinPos + Merge', () => {
         const n = 10
         const fmin = (a, b) => {
             return a[0] <= b[0] ? a : b
